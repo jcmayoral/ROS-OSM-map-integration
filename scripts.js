@@ -85,6 +85,12 @@ function mapInit() {
 	}).addTo(map);
 
 	L.easyButton('glyphicon glyphicon-cog', function(btn, map){
+		console.log("engrane")
+		// TODO : add the possibility to modify params on the run
+	}).addTo(map);
+
+	L.easyButton('glyphicon glyphicon-coaaag', function(btn, map){
+		console.log("My button")
 		// TODO : add the possibility to modify params on the run
 	}).addTo(map);
 
@@ -113,6 +119,10 @@ var routeControl;
 var loadedMap = false;
 var i = 0;
 var listenerGPS;
+
+// FOR LINES
+//https://gis.stackexchange.com/questions/53394/select-two-markers-draw-line-between-them-in-leaflet
+var example_line = Array()
 
 //===> ROS connexion
 var ros = new ROSLIB.Ros({
@@ -303,7 +313,7 @@ paramTopicName.get(function(value) {
 				loadedMap = true;
 			}
 
-			if(i % paramNbCyclesValue == 0)
+			if(i == paramNbCyclesValue)
 			{
 				// Refresh the global variable with the position
 				currentPosition.latitude = lat;
@@ -314,6 +324,8 @@ paramTopicName.get(function(value) {
 				bounds = map.getBounds();
 				if(!bounds.contains([lat, lon]))
 					map.setView([lat, lon], zoomLevel);
+
+				i=0
 
 				console.log("Update position");
 			}
@@ -328,7 +340,30 @@ paramTopicName.get(function(value) {
 		});
 
 		markersSub.subscribe(function(message){
-			console.log("markers")
+			console.log("markers", currentPosition.latitude)
+			var pointList = Array()
+			pointList.push(new L.LatLng(0,.1))
+			pointList.push(new L.LatLng(.1,0))
+			pointList.push(new L.LatLng(.1,.1))
+			pointList.push(new L.LatLng(0,0))
+
+			//var firstpolyline = new L.polyline(pointList ,{
+			//	color: 'red',
+			//	weight: 3,
+			//	opacity: 1.0,
+			//	smoothFactor: 1
+			//})
+			//latlngs.push(currentPosition.latitude)
+			//latlngs.push(currentPosition.latitude)
+			//var polyline = L.polyline([0,10], {color: 'red'})//.addTo(map);
+			//console.log(firstpolyline)
+			//firstpolyline.addTo(map)
+
+
+			var polylinePoints = [[0, .1],[.1,.1],[.1, 0],[0,0],[0,.1]];
+			var polyline = L.polyline(polylinePoints).addTo(map);
+			// zoom the map to the polyline
+			//map.fitBounds(polyline.getBounds());
 		})
 	});
 });
