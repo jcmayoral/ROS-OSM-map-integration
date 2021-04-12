@@ -8,7 +8,7 @@
 
 // This code has been written in order to create a nice interface to interact
 // with the autonomous electric car of the UPV ai2 laboratory. It displays a map,
-// set a marker on the car's position using gps publishing topic, and allows a user 
+// set a marker on the car's position using gps publishing topic, and allows a user
 // to start the routing by tapping the destination on the touchscreen.
 
 // License : Apache 2.0
@@ -32,20 +32,21 @@ var CONFIG_cycles_number = 20;
 // If you downloaded tiles and put it in the car, then you can
 // access them in local, or else, connect to server.
 // Set this config to "local" or "server".
-var CONFIG_tile_source = 'local';
+var CONFIG_tile_source = 'server'
 
 // If you use local tiles, set here the path to it
 var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 
 // Network address to ROS server (it can be localhost or an IP)
 var CONFIG_ROS_server_URI = 'localhost';
+CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 
 
 // ============================= FUNCTIONS
 
 // ===> mapInit() : init the map
 function mapInit() {
-	
+
 	//===> Var init
 
 	// Fetch tiles
@@ -55,15 +56,15 @@ function mapInit() {
 		var tileUrl = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png';
 
 	// Set attrib (always !)
-	var attrib = 'Map data © OpenStreetMap contributors'; 
+	var attrib = 'Map data © OpenStreetMap contributors';
 
 	//===> Map loading
 	map = L.map('map');
 	var osm = L.tileLayer(tileUrl, {
-		minZoom: 12, 
+		minZoom: 12,
 		maxZoom: 18,
 		attribution: attrib
-	}); 
+	});
 	osm.addTo(map);
 
 	L.easyButton('glyphicon-road', function(btn, map){
@@ -120,7 +121,7 @@ var ros = new ROSLIB.Ros({
 
 swal({
 	title: "Connecting to ROS...",
-	showConfirmButton: false,
+	showConfirmButton: true,
 	closeOnConfirm: false,
 	showLoaderOnConfirm: true,
 	allowOutsideClick: false,
@@ -147,7 +148,7 @@ ros.on('error', function(error) {
 	console.log('Error connecting to websocket server: ', error);
 	swal({
 		title: "Error connecting the ROS server",
-		text: "Unable to reach ROS server. Is rosbridge launched ?",
+		text: "Unable to reach ROS server. Is rosbridge launched ? "+ CONFIG_ROS_server_URI,
 		type: "error",
 		confirmButtonText: "Retry",
 		closeOnConfirm: false,
@@ -163,7 +164,7 @@ ros.on('close', function() {
 	console.log("Connexion closed.");
 	swal({
 		title: "Error connecting the ROS server",
-		text: "Unable to reach ROS server. Is rosbridge launched ?",
+		text: "Unable to reach ROS server. Is rosbridge launched? in server: " + CONFIG_ROS_server_URI,
 		type: "error",
 		confirmButtonText: "Retry",
 		closeOnConfirm: false,
@@ -198,7 +199,7 @@ var paramEndGoTo = new ROSLIB.Param({
 });
 
 paramStartLat.set(0);
-paramStartLon.set(0);	
+paramStartLon.set(0);
 paramEndLat.set(0);
 paramEndLon.set(0);
 paramEndGoTo.set(false);
@@ -217,7 +218,7 @@ map.on('click', function(e) {
 		var lon = e.latlng.lng;
 		//Place a marker
 		markerFinish.setLatLng([lat,lon]);
-		markerFinish.setOpacity(1);
+		markerFinish.setOpacity(0.1);
 		setTimeout(function() {
 			swal({
 				title: "Is this correct ?",
@@ -260,23 +261,20 @@ var paramNbCyclesValue = CONFIG_cycles_number;
 var paramTopicName = new ROSLIB.Param({ros : ros, name : '/panel/gps_topic'});
 var paramNbCycles = new ROSLIB.Param({ros : ros, name : '/panel/nb_cycles'});
 
-
-
 //  => Set the value
-paramTopicName.get(function(value) { 
+paramTopicName.get(function(value) {
 	// If the param isn't created yet, we keep the default value
-	if(value != null) 
-		paramTopicNameValue = value; 
+	if(value != null)
+		paramTopicNameValue = value;
 	else
 		paramTopicName.set(paramTopicNameValue);
-	
-	paramNbCycles.get(function(value) { 
+
+	paramNbCycles.get(function(value) {
 		// If the param isn't created yet, we keep the default value
-		if(value != null) 
-			paramNbCyclesValue = value; 
+		if(value != null)
+			paramNbCyclesValue = value;
 		else
 		paramNbCycles.set(paramNbCyclesValue);
-
 
 		// Set the listener informations
 		listenerGPS = new ROSLIB.Topic({
@@ -294,7 +292,7 @@ paramTopicName.get(function(value) {
 			var lat = message.latitude;
 			var lon = message.longitude;
 
-			if(loadedMap == false) 
+			if(loadedMap == false)
 			{
 				swal.close();
 				// Center the map on the car's position
@@ -323,6 +321,14 @@ paramTopicName.get(function(value) {
 			i++;
 
 		});
+		markersSub = new ROSLIB.Topic({
+			ros : ros,
+			name : "/markers",
+			messageType : 'visualization_msgs/Marker'
+		});
+
+		markersSub.subscribe(function(message){
+			console.log("markers")
+		})
 	});
 });
-
