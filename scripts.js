@@ -23,6 +23,8 @@
 
 // The name of the GPS publisher name by default
 var CONFIG_default_gps_topic_name = '/gps';
+var CONFIG_default_markers_topic_name = '/markers';
+var CONFIG_default_people_topic_name = '/people';
 
 // The number of cycles between every marker position reload
 var CONFIG_cycles_number = 20;
@@ -119,6 +121,7 @@ var routeControl;
 var loadedMap = false;
 var i = 0;
 var listenerGPS;
+var listenerMarker;
 
 // FOR LINES
 //https://gis.stackexchange.com/questions/53394/select-two-markers-draw-line-between-them-in-leaflet
@@ -271,8 +274,15 @@ var paramNbCyclesValue = CONFIG_cycles_number;
 var paramTopicName = new ROSLIB.Param({ros : ros, name : '/panel/gps_topic'});
 var paramNbCycles = new ROSLIB.Param({ros : ros, name : '/panel/nb_cycles'});
 
+// = > Markers
+var paramMarkersTopicName = new ROSLIB.Param({ros : ros, name : '/panel/markers_topic'});
+
+// = > Perople Stuff
+var paramPersonsTopicName = new ROSLIB.Param({ros : ros, name : '/panel/persons_topic'});
+
 //  => Set the value
 paramTopicName.get(function(value) {
+	console.log(value)
 	// If the param isn't created yet, we keep the default value
 	if(value != null)
 		paramTopicNameValue = value;
@@ -296,6 +306,7 @@ paramTopicName.get(function(value) {
 		// Set the callback function when a message from /gps is received
 
 		var i = 0;
+		console.log("antes del subscribe"+paramTopicNameValue)
 
 		listenerGPS.subscribe(function(message) {
 			// We have to wait for the GPS before showing the map, because we don't know where we are
@@ -319,6 +330,7 @@ paramTopicName.get(function(value) {
 				currentPosition.latitude = lat;
 				currentPosition.longitude = lon;
 				// Refresh the position of the marker on the map
+				console.log("IN")
 				markerPosition.setLatLng([lat, lon]);
 				// If the marker has went out of the map, we move the map
 				bounds = map.getBounds();
@@ -333,37 +345,46 @@ paramTopicName.get(function(value) {
 			i++;
 
 		});
-		markersSub = new ROSLIB.Topic({
-			ros : ros,
-			name : "/markers",
-			messageType : 'visualization_msgs/Marker'
-		});
+	});
+});
 
-		markersSub.subscribe(function(message){
-			console.log("markers", currentPosition.latitude)
-			var pointList = Array()
-			pointList.push(new L.LatLng(0,.1))
-			pointList.push(new L.LatLng(.1,0))
-			pointList.push(new L.LatLng(.1,.1))
-			pointList.push(new L.LatLng(0,0))
+paramMarkersTopicName.get(function(value) {
+	console.log("AQUI", value)
+	if(value != null)
+		paramTopicNameValue = value;
+	else
+		paramTopicName.set(CONFIG_default_markers_topic_name);
 
-			//var firstpolyline = new L.polyline(pointList ,{
-			//	color: 'red',
-			//	weight: 3,
-			//	opacity: 1.0,
-			//	smoothFactor: 1
-			//})
-			//latlngs.push(currentPosition.latitude)
-			//latlngs.push(currentPosition.latitude)
-			//var polyline = L.polyline([0,10], {color: 'red'})//.addTo(map);
-			//console.log(firstpolyline)
-			//firstpolyline.addTo(map)
+	listenerMarker = new ROSLIB.Topic({
+		ros : ros,
+		name : "/markers",
+		messageType : 'visualization_msgs/Marker'
+	});
+
+	listenerMarker.subscribe(function(message){
+		console.log("markers", currentPosition.latitude)
+		var pointList = Array()
+		pointList.push(new L.LatLng(0,.1))
+		pointList.push(new L.LatLng(.1,0))
+		pointList.push(new L.LatLng(.1,.1))
+		pointList.push(new L.LatLng(0,0))
+
+		//var firstpolyline = new L.polyline(pointList ,{
+		//	color: 'red',
+		//	weight: 3,
+		//	opacity: 1.0,
+		//	smoothFactor: 1
+		//})
+		//latlngs.push(currentPosition.latitude)
+		//latlngs.push(currentPosition.latitude)
+		//var polyline = L.polyline([0,10], {color: 'red'})//.addTo(map);
+		//console.log(firstpolyline)
+		//firstpolyline.addTo(map)
 
 
-			var polylinePoints = [[0, .1],[.1,.1],[.1, 0],[0,0],[0,.1]];
-			var polyline = L.polyline(polylinePoints).addTo(map);
-			// zoom the map to the polyline
-			//map.fitBounds(polyline.getBounds());
-		})
+		var polylinePoints = [[0, .1],[.1,.1],[.1, 0],[0,0],[0,.1]];
+		var polyline = L.polyline(polylinePoints).addTo(map);
+		// zoom the map to the polyline
+		//map.fitBounds(polyline.getBounds());
 	});
 });
