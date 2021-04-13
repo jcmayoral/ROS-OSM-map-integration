@@ -282,7 +282,7 @@ var paramPersonsTopicName = new ROSLIB.Param({ros : ros, name : '/panel/persons_
 
 //  => Set the value
 paramTopicName.get(function(value) {
-	console.log(value)
+	console.log(value, "GPS")
 	// If the param isn't created yet, we keep the default value
 	if(value != null)
 		paramTopicNameValue = value;
@@ -330,7 +330,6 @@ paramTopicName.get(function(value) {
 				currentPosition.latitude = lat;
 				currentPosition.longitude = lon;
 				// Refresh the position of the marker on the map
-				console.log("IN")
 				markerPosition.setLatLng([lat, lon]);
 				// If the marker has went out of the map, we move the map
 				bounds = map.getBounds();
@@ -338,8 +337,6 @@ paramTopicName.get(function(value) {
 					map.setView([lat, lon], zoomLevel);
 
 				i=0
-
-				console.log("Update position");
 			}
 
 			i++;
@@ -350,10 +347,6 @@ paramTopicName.get(function(value) {
 
 paramMarkersTopicName.get(function(value) {
 	console.log("AQUI", value)
-	if(value != null)
-		paramTopicNameValue = value;
-	else
-		paramTopicName.set(CONFIG_default_markers_topic_name);
 
 	listenerMarker = new ROSLIB.Topic({
 		ros : ros,
@@ -362,29 +355,18 @@ paramMarkersTopicName.get(function(value) {
 	});
 
 	listenerMarker.subscribe(function(message){
-		console.log("markers", currentPosition.latitude)
+
+		const center_lat = 	currentPosition.latitude;
+		const center_lng = currentPosition.longitude;
 		var pointList = Array()
-		pointList.push(new L.LatLng(0,.1))
-		pointList.push(new L.LatLng(.1,0))
-		pointList.push(new L.LatLng(.1,.1))
-		pointList.push(new L.LatLng(0,0))
+		pointList.push(new L.LatLng(center_lat-.001,center_lng+.001))
+		pointList.push(new L.LatLng(center_lat+.001,center_lng+.001))
+		pointList.push(new L.LatLng(center_lat + .001, center_lng-.001))
+		pointList.push(new L.LatLng(center_lat-.001,center_lng-.001))
+		pointList.push(new L.LatLng(center_lat-.001,center_lng+.001))
 
-		//var firstpolyline = new L.polyline(pointList ,{
-		//	color: 'red',
-		//	weight: 3,
-		//	opacity: 1.0,
-		//	smoothFactor: 1
-		//})
-		//latlngs.push(currentPosition.latitude)
-		//latlngs.push(currentPosition.latitude)
-		//var polyline = L.polyline([0,10], {color: 'red'})//.addTo(map);
-		//console.log(firstpolyline)
-		//firstpolyline.addTo(map)
-
-
-		var polylinePoints = [[0, .1],[.1,.1],[.1, 0],[0,0],[0,.1]];
-		var polyline = L.polyline(polylinePoints).addTo(map);
+		var polyline = L.polyline(pointList,{color: 'red', weight: 10, smoothFactor: 0.5}).addTo(map);
 		// zoom the map to the polyline
-		//map.fitBounds(polyline.getBounds());
+		map.fitBounds(polyline.getBounds());
 	});
 });
