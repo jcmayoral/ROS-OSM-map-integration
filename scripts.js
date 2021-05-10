@@ -365,7 +365,7 @@ var image_topic = new ROSLIB.Topic({
 image_topic.subscribe(function(message) {
 	console.log("in image")
   document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
-  //image_topic.unsubscribe();
+  image_topic.unsubscribe();
 });
 
 paramMarkersTopicName.get(function(value) {
