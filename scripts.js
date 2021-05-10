@@ -22,8 +22,8 @@
 // between each refreshing.
 
 // The name of the GPS publisher name by default
-var CONFIG_default_gps_topic_name = '/gps';
-var CONFIG_default_markers_topic_name = '/markers';
+var CONFIG_default_gps_topic_name = '/fix';
+var CONFIG_default_markers_topic_name = '/region';
 var CONFIG_default_people_topic_name = '/people';
 
 // The number of cycles between every marker position reload
@@ -41,7 +41,7 @@ var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 
 // Network address to ROS server (it can be localhost or an IP)
 var CONFIG_ROS_server_URI = 'localhost';
-CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
+//CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 
 
 // ============================= FUNCTIONS
@@ -345,12 +345,35 @@ paramTopicName.get(function(value) {
 	});
 });
 
+/*
+var tfClient = new ROSLIB.TFClient({
+    ros : ros,
+    fixedFrame : 'world',
+    angularThres : 0.0,
+    transThres : 0.0
+  });
+
+tfClient.subscribe('workspace', function(tf) {
+    console.log(tf);
+});
+*/
+console.log("register image")
+var image_topic = new ROSLIB.Topic({
+  ros: ros, name: '/usb_cam/image_raw/compressed',
+  messageType: 'sensor_msgs/CompressedImage'
+});
+image_topic.subscribe(function(message) {
+	console.log("in image")
+  document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
+  //image_topic.unsubscribe();
+});
+
 paramMarkersTopicName.get(function(value) {
 	console.log("AQUI", value)
 
 	listenerMarker = new ROSLIB.Topic({
 		ros : ros,
-		name : "/markers",
+		name : "/region",
 		messageType : 'visualization_msgs/Marker'
 	});
 
@@ -364,6 +387,9 @@ paramMarkersTopicName.get(function(value) {
 		pointList.push(new L.LatLng(center_lat + .001, center_lng-.001))
 		pointList.push(new L.LatLng(center_lat-.001,center_lng-.001))
 		pointList.push(new L.LatLng(center_lat-.001,center_lng+.001))
+		console.log(pointList)
+		console.log(center_lat)
+		console.log(center_lng)
 
 		var polyline = L.polyline(pointList,{color: 'red', weight: 10, smoothFactor: 0.5}).addTo(map);
 		// zoom the map to the polyline
