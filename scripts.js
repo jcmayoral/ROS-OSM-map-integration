@@ -127,9 +127,17 @@ function mapInit() {
 		});
 	}).addTo(map);
 
+
+	var serviceclient = new ROSLIB.Service({
+		ros: ros,
+		name: "/topological/edges",
+		serviceType : "gr_action_msgs/GREdges2",
+	});
+
 	L.easyButton('glyphicon glyphicon-cog', function(btn, map){
 		console.log("engrane")
 		if (selectionMode){
+			/*
 			var actionclient = new ROSLIB.ActionClient({
 				ros: ros,
 				serverName: "topological_map/edges",
@@ -138,7 +146,6 @@ function mapInit() {
 				omitStatus: true,
 				omitResult: true
 			})
-			console.log(actionclient)
 			var message = new ROSLIB.Message({
 				 long_left_bottom: left_bottom[0],
 				 long_right_top: right_top[0],
@@ -147,8 +154,7 @@ function mapInit() {
 				 width_meters: map_shape[1],
 				 height_meters: map_shape[0]
 			})
-			console.log(message)
-
+			console.log(actionclient)
 			var goal = new ROSLIB.Goal({
 				actionClient: actionclient,
 				goalMessage: message
@@ -160,6 +166,25 @@ function mapInit() {
 			goal.on('result', function(result) {
 						 console.log('Final Result: ' + result.sequence);
 					 });
+			*/
+
+			var request = new ROSLIB.ServiceRequest({
+				 long_left_bottom: left_bottom[0],
+				 long_right_top: right_top[0],
+				 lan_left_bottom: left_bottom[1],
+				 lan_right_top: right_top[1],
+				 width_meters: map_shape[1],
+				 height_meters: map_shape[0]
+			});
+			serviceclient.callService(request, function (result) {
+				console.log('Result for service call power_state = ' + result);
+
+            alert('Result for service call power_state = ' + result);
+      }, function(error){
+				console.log("Got an error while trying to call power state service" + error);
+
+            alert("Got an error while trying to call power state service" + error);
+      });
 
 			console.log("AAA")
 		}
