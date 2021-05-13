@@ -70,6 +70,7 @@ function mapInit() {
 	osm.addTo(map);
 
 	L.easyButton('glyphicon-road', function(btn, map){
+		/*
 		swal({
 			title: "Where do you want to go ?",
 			text: "After closing this popup, click on the place you want to go.",
@@ -84,6 +85,7 @@ function mapInit() {
 			if (isConfirm) selectionMode = true;
 			else selectionMode = false;
 		});
+		*/
 	}).addTo(map);
 
 	L.easyButton('glyphicon glyphicon-cog', function(btn, map){
@@ -109,7 +111,7 @@ function mapInit() {
 
 //===> Global variables
 var map;
-var selectionMode;
+var selectionMode = true; //ommit confimation
 var bounds;
 var currentPosition = {latitude : 0, longitude : 0};
 var startPoint;
@@ -148,7 +150,7 @@ ros.on('connection', function() {
 		text: "The navigation module can't work without the GPS. Launch the GPS and the module will start automatically.",
 		type: "info",
 		confirmButtonText: "Reload",
-		closeOnConfirm: false,
+		closeOnConfirm: true,
 		allowOutsideClick: false,
 		allowEscapeKey: false
 	},
@@ -221,11 +223,21 @@ paramEndGoTo.set(false);
 
 mapInit();
 
+
+var edgesActionClient = ROSLIB.ActionClient({
+	ros: ros,
+	servername: "/topological_map",
+	actionName : "gr_action_msgs/GREdgesAction"
+})
+
+var left_bottom = [0,0]
+var right_top = [0,0]
+
 map.on('click', function(e) {
 	//When a click on the map is detected
 	if(selectionMode == true)
 	{
-		selectionMode = false;
+		//selectionMode = false;
 		//First, get the coordinates of the point clicked
 		var lat = e.latlng.lat;
 		var lon = e.latlng.lng;
@@ -234,10 +246,11 @@ map.on('click', function(e) {
 		markerFinish.setOpacity(0.1);
 		setTimeout(function() {
 			swal({
-				title: "Is this correct ?",
-				text: "Confirm the position to start the navigation.",
+				title: "Is this left bottom?",
+				text: "Is this the left bottom or the right top?????",
 				type: "info",
-				confirmButtonText: "Yes, let's go !",
+				confirmButtonText: "it is left!",
+				buttons: true, //['left', 'right'],
 				showCancelButton: true,
 				closeOnConfirm: true,
 				allowOutsideClick: false,
@@ -248,7 +261,8 @@ map.on('click', function(e) {
 						//Logging stuff in the console
 						console.log('Routing Start !');
 						console.log('Start set to : '+ currentPosition.latitude + ' ' + currentPosition.longitude);
-						console.log('Destination set to : '+lat + ' ' + lon);
+						console.log('Left Pose set to : '+lat + ' ' + lon);
+						left_bottom = [lat,lon]
 						//Set all the parameters to the destination
 						paramStartLat.set(currentPosition.latitude);
 						paramStartLon.set(currentPosition.longitude);
@@ -258,8 +272,21 @@ map.on('click', function(e) {
 					}
 					else
 					{
-						markerFinish.setOpacity(0);
+						console.log("else")
+						right_top = [lat,lon]
+						//markerFinish.setOpacity(0);
 					}
+
+					var pointList = Array()
+					pointList.push(new L.LatLng(left_bottom[0],left_bottom[1]))
+					pointList.push(new L.LatLng(left_bottom[0], right_top[1]))
+					pointList.push(new L.LatLng(right_top[0], right_top[1]))
+					pointList.push(new L.LatLng(right_top[0], left_bottom[1]))
+					pointList.push(new L.LatLng(left_bottom[0],left_bottom[1]))
+					var polyline = L.polyline(pointList,{color: 'blue', weight: 10, smoothFactor: 0.5}).addTo(map);
+					// zoom the map to the polyline
+					map.fitBounds(polyline.getBounds());
+
 				})}, 1000);
 	}
 });
@@ -345,18 +372,24 @@ paramTopicName.get(function(value) {
 	});
 });
 
-/*
 var tfClient = new ROSLIB.TFClient({
     ros : ros,
     fixedFrame : 'world',
-    angularThres : 0.0,
-    transThres : 0.0
+    angularThres : 0.001,
+    transThres : 0.001
   });
 
 tfClient.subscribe('workspace', function(tf) {
     console.log(tf);
+		console.log("tf");
+
 });
-*/
+
+
+/*tfClient.processFeedback((tf) => {
+    console.log(tf);
+});*/
+
 console.log("register image")
 var image_topic = new ROSLIB.Topic({
   ros: ros, name: '/usb_cam/image_raw/compressed',
