@@ -42,7 +42,48 @@ var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 // Network address to ROS server (it can be localhost or an IP)
 var CONFIG_ROS_server_URI = 'localhost';
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
+//CONFIG_ROS_server_URI = 'josePC0'
 
+
+var left_bottom = [0,0]
+var right_top = [0,0]
+var map_shape = [0,0]
+var polyline;
+
+// ============================= SCRIPT
+
+//===> Global variables
+var map;
+var selectionMode;//ommit confimation and set this to true
+var bounds;
+var currentPosition = {latitude : 0, longitude : 0};
+var startPoint;
+var endPoint;
+var markerPosition = L.marker([0,0]);
+var markerFinish = L.marker([0,0]);
+var zoomLevel = 16;
+var routeControl;
+var loadedMap = false;
+var i = 0;
+var listenerGPS;
+var listenerMarker;
+
+// FOR LINES
+//https://gis.stackexchange.com/questions/53394/select-two-markers-draw-line-between-them-in-leaflet
+var example_line = Array()
+
+//===> ROS connexion
+var ros = new ROSLIB.Ros({
+	url : 'ws://'+ CONFIG_ROS_server_URI +':8080'
+});
+
+/*
+var edgesActionClient = ROSLIB.ActionClient({
+	ros: ros,
+	serverName: "topological_map/edges",
+	actionName : "gr_action_msgs/GREdgesAction"
+})
+*/
 
 // ============================= FUNCTIONS
 
@@ -70,10 +111,9 @@ function mapInit() {
 	osm.addTo(map);
 
 	L.easyButton('glyphicon-road', function(btn, map){
-		/*
 		swal({
-			title: "Where do you want to go ?",
-			text: "After closing this popup, click on the place you want to go.",
+			title: "Do you want to enable workspace remote edition?",
+			text: "After closing this popup, click on the left bottom and right top corners of the workspace.",
 			type: "info",
 			confirmButtonText: "Got it!",
 			showCancelButton: true,
@@ -85,11 +125,47 @@ function mapInit() {
 			if (isConfirm) selectionMode = true;
 			else selectionMode = false;
 		});
-		*/
 	}).addTo(map);
 
 	L.easyButton('glyphicon glyphicon-cog', function(btn, map){
 		console.log("engrane")
+		if (selectionMode){
+			var actionclient = new ROSLIB.ActionClient({
+				ros: ros,
+				serverName: "topological_map/edges",
+				actionName : "gr_action_msgs/GREdgesAction",
+				omitFeedback: true,
+				omitStatus: true,
+				omitResult: true
+			})
+			console.log(actionclient)
+			var message = new ROSLIB.Message({
+				 long_left_bottom: left_bottom[0],
+				 long_right_top: right_top[0],
+				 lan_left_botton: left_bottom[1],
+				 lan_right_top: right_top[1],
+				 width_meters: map_shape[1],
+				 height_meters: map_shape[0]
+			})
+			console.log(message)
+
+			var goal = new ROSLIB.Goal({
+				actionClient: actionclient,
+				goalMessage: message
+			});
+			goal.on('feedback', function(feedback) {
+						 console.log('Feedback: ' + feedback.sequence);
+					 });
+
+			goal.on('result', function(result) {
+						 console.log('Final Result: ' + result.sequence);
+					 });
+
+			console.log("AAA")
+		}
+		else{
+			alert("edition not enable")
+		}
 		// TODO : add the possibility to modify params on the run
 	}).addTo(map);
 
@@ -107,32 +183,7 @@ function mapInit() {
 	return map;
 }
 
-// ============================= SCRIPT
 
-//===> Global variables
-var map;
-var selectionMode = true; //ommit confimation
-var bounds;
-var currentPosition = {latitude : 0, longitude : 0};
-var startPoint;
-var endPoint;
-var markerPosition = L.marker([0,0]);
-var markerFinish = L.marker([0,0]);
-var zoomLevel = 16;
-var routeControl;
-var loadedMap = false;
-var i = 0;
-var listenerGPS;
-var listenerMarker;
-
-// FOR LINES
-//https://gis.stackexchange.com/questions/53394/select-two-markers-draw-line-between-them-in-leaflet
-var example_line = Array()
-
-//===> ROS connexion
-var ros = new ROSLIB.Ros({
-	url : 'ws://'+ CONFIG_ROS_server_URI +':9090'
-});
 
 swal({
 	title: "Connecting to ROS...",
@@ -223,17 +274,29 @@ paramEndGoTo.set(false);
 
 mapInit();
 
-
-var edgesActionClient = ROSLIB.ActionClient({
-	ros: ros,
-	servername: "/topological_map",
-	actionName : "gr_action_msgs/GREdgesAction"
-})
-
-var left_bottom = [0,0]
-var right_top = [0,0]
-var polyline;
-
+//https://www.geodatasource.com/developers/javascript
+function calculateDistance(lat1, lon1, lat2, lon2, unit='M') {//meters
+	if ((lat1 == lat2) && (lon1 == lon2)) {
+		return 0;
+	}
+	else {
+		var radlat1 = Math.PI * lat1/180;
+		var radlat2 = Math.PI * lat2/180;
+		var theta = lon1-lon2;
+		var radtheta = Math.PI * theta/180;
+		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+		if (dist > 1) {
+			dist = 1;
+		}
+		dist = Math.acos(dist);
+		dist = dist * 180/Math.PI;
+		dist = dist * 60 * 1.1515;
+		if (unit=="K") { dist = dist * 1.609344 }
+		if (unit=="M") { dist = dist * 1609.344 }
+		if (unit=="N") { dist = dist * 0.8684 }
+		return dist;
+	}
+}
 
 map.on('click', function(e) {
 	//When a click on the map is detected
@@ -265,8 +328,6 @@ map.on('click', function(e) {
 				if (isConfirm)
 				{
 						//Logging stuff in the console
-						console.log('Routing Start !');
-						console.log('Start set to : '+ currentPosition.latitude + ' ' + currentPosition.longitude);
 						console.log('Left Pose set to : '+lat + ' ' + lon);
 						left_bottom = [lat,lon]
 						//Set all the parameters to the destination
@@ -278,7 +339,7 @@ map.on('click', function(e) {
 					}
 					else
 					{
-						console.log("else")
+						console.log('Right Pose set to : '+lat + ' ' + lon);
 						right_top = [lat,lon]
 						//markerFinish.setOpacity(0);
 					}
@@ -286,9 +347,18 @@ map.on('click', function(e) {
 					var pointList = Array()
 					pointList.push(new L.LatLng(left_bottom[0],left_bottom[1]))
 					pointList.push(new L.LatLng(left_bottom[0], right_top[1]))
+
+
+					console.log("distance 00 ", calculateDistance(left_bottom[0],left_bottom[1],right_top[0], right_top[1]))
+					map_shape[1] = calculateDistance(left_bottom[0],left_bottom[1],right_top[0], right_top[1])
+
+					console.log("distance 1", calculateDistance(left_bottom[0],left_bottom[1],left_bottom[0], right_top[1]))
 					pointList.push(new L.LatLng(right_top[0], right_top[1]))
 					pointList.push(new L.LatLng(right_top[0], left_bottom[1]))
 					pointList.push(new L.LatLng(left_bottom[0],left_bottom[1]))
+					console.log(calculateDistance(right_top[0],left_bottom[1],left_bottom[0],left_bottom[1]))
+
+					map_shape[0] = calculateDistance(right_top[0],left_bottom[1],left_bottom[0],left_bottom[1])
 					polyline = L.polyline(pointList,{color: 'blue', weight: 10, smoothFactor: 0.5}).addTo(map);
 					// zoom the map to the polyline
 					map.fitBounds(polyline.getBounds());
@@ -396,17 +466,19 @@ tfClient.subscribe('workspace', function(tf) {
     console.log(tf);
 });*/
 
+/*
 console.log("register image")
 var image_topic = new ROSLIB.Topic({
   ros: ros, name: '/usb_cam/image_raw/compressed',
   messageType: 'sensor_msgs/CompressedImage'
 });
+
 image_topic.subscribe(function(message) {
 	console.log("in image")
   document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
   image_topic.unsubscribe();
 });
-
+*/
 paramMarkersTopicName.get(function(value) {
 	console.log("AQUI", value)
 

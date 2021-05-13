@@ -4,16 +4,24 @@
 		<title>Robotnik panel</title>
 		<meta charset="UTF-8">
 		<!-- Leaflet -->
-		<link rel="stylesheet" href="lib/leaflet/leaflet.css" />
-		<script src="lib/leaflet/leaflet.js"></script>
+		<!--link rel="stylesheet" href="lib/leaflet/leaflet.css" /-->
+		<!--script src="lib/leaflet/leaflet.js"></script-->
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+			integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+			crossorigin=""/>
+		<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+			integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+			crossorigin=""></script>
 
 		<!-- Easy Button -->
 		<link href="lib/easy-button/easy-button.css" rel="stylesheet">
 		<script src="lib/easy-button/easy-button.js"></script>
 
 		<!-- Roscore -->
-		<script type="text/javascript" src="lib/roslib/eventemitter2.min.js"></script>
-		<script type="text/javascript" src="lib/roslib/roslib.min.js"></script>
+		<!--script type="text/javascript" src="lib/roslib/eventemitter2.min.js"></script>
+		<script type="text/javascript" src="lib/roslib/roslib.min.js"></script-->
+		<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 
 		<!-- Bootstrap & JQuery -->
 		<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -45,8 +53,8 @@
 	</style>
 
 	<body>
-		<img id="my_image" style='height: 50%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg">
-		<div id="map" style='height: 50%; width: 100%'></div>
+		<!--img id="my_image" style='height: 50%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg"-->
+		<div id="map" style='height: 100%; width: 100%'></div>
 	</body>
 
 	<!-- Scripts -->
