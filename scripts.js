@@ -232,6 +232,8 @@ var edgesActionClient = ROSLIB.ActionClient({
 
 var left_bottom = [0,0]
 var right_top = [0,0]
+var polyline;
+
 
 map.on('click', function(e) {
 	//When a click on the map is detected
@@ -256,6 +258,10 @@ map.on('click', function(e) {
 				allowOutsideClick: false,
 			},
 			function(isConfirm){
+				if (polyline != undefined){
+					polyline.onRemove(map)
+				}
+
 				if (isConfirm)
 				{
 						//Logging stuff in the console
@@ -283,7 +289,7 @@ map.on('click', function(e) {
 					pointList.push(new L.LatLng(right_top[0], right_top[1]))
 					pointList.push(new L.LatLng(right_top[0], left_bottom[1]))
 					pointList.push(new L.LatLng(left_bottom[0],left_bottom[1]))
-					var polyline = L.polyline(pointList,{color: 'blue', weight: 10, smoothFactor: 0.5}).addTo(map);
+					polyline = L.polyline(pointList,{color: 'blue', weight: 10, smoothFactor: 0.5}).addTo(map);
 					// zoom the map to the polyline
 					map.fitBounds(polyline.getBounds());
 
