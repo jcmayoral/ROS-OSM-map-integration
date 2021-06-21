@@ -42,7 +42,7 @@ var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 // Network address to ROS server (it can be localhost or an IP)
 var CONFIG_ROS_server_URI = 'localhost';
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
-//CONFIG_ROS_server_URI = 'josePC0'
+//CONFIG_ROS_server_URI = 'josePC'
 
 
 var left_bottom = [0,0]
@@ -405,9 +405,6 @@ var paramNbCycles = new ROSLIB.Param({ros : ros, name : '/panel/nb_cycles'});
 // = > Markers
 var paramMarkersTopicName = new ROSLIB.Param({ros : ros, name : '/panel/markers_topic'});
 
-// = > Perople Stuff
-var paramPersonsTopicName = new ROSLIB.Param({ros : ros, name : '/panel/persons_topic'});
-
 //  => Set the value
 paramTopicName.get(function(value) {
 	console.log(value, "GPS")
@@ -531,4 +528,95 @@ paramMarkersTopicName.get(function(value) {
 		// zoom the map to the polyline
 		map.fitBounds(polyline.getBounds());
 	});
+});
+
+
+// = > Perople Stuff
+var safetyTopic = new ROSLIB.Topic({
+	ros : ros,
+	name : "/safety_score",
+	messageType : 'std_msgs/Float32'
+});
+
+safetyTopic.subscribe(function(value){
+	document.getElementById("score").innerHTML = "RIsk Status: " + value.data.toFixed(2)*100 + "%"
+	//console.log("safety score received")
+	//console.log(value)
+});
+
+// = > Perople Stuff
+var detectionTopic = new ROSLIB.Topic({
+	ros : ros,
+	name : "/pointcloud_lidar_processing/detected_objects",
+	messageType : 'geometry_msgs/PoseArray'
+});
+
+
+/*
+var canvas = document.createElement("canvas");
+canvas.setAttribute("width", window.innerWidth);
+canvas.setAttribute("height", window.innerHeight);
+canvas.setAttribute("style", "position: absolute; x:0; y:0;");
+document.body.appendChild(canvas);
+
+//Then you can draw a point at (10,10) like this:
+var ctx = canvas.getContext("2d");
+ctx.fillRect(10,10,1,1);
+*/
+
+detectionTopic.subscribe(function(value){
+	//document.getElementById("score").innerHTML = "RIsk Status: " + value.data.toFixed(2)*100 + "%"
+	//console.log("safety score received")
+	//var ctx = canvas.getContext("2d");
+	var mydata = new Array()
+
+	//console.log(value)
+	value.poses.forEach(function(pose){
+		console.log({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
+		mydata.push({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
+		//ctx.fillRect(pose.x,pose.y,1,1);
+
+	})
+
+	var x = new Chart(document.getElementById("personChart"), {
+	   type: 'scatter',
+	   data: {
+	      datasets: [{
+	         label: "Test",
+	         data: mydata
+	      }]
+	   },
+	   options: {
+	      responsive: true
+	   }
+	});
+	console.log(mydata, "data")
+
+	/*Original
+	var x = new Chart(document.getElementById("personChart"), {
+	   type: 'scatter',
+	   data: {
+	      datasets: [{
+	         label: "Test",
+	         data: [{
+	            x: 0,
+	            y: 5
+	         }, {
+	            x: 5,
+	            y: 10
+	         }, {
+	            x: 8,
+	            y: 5
+	         }, {
+	            x: 15,
+	            y: 0
+	         }],
+	      }]
+	   },
+	   options: {
+	      responsive: true
+	   }
+	});
+	*/
+
 });

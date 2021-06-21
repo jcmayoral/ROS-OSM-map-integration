@@ -30,6 +30,10 @@
 		<!-- SweetAlert -->
 		<link href="lib/sweetalert/sweetalert.css" rel="stylesheet">
 		<script src="lib/sweetalert/sweetalert.min.js"></script>
+
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+
 	</head>
 
 	<style>
@@ -57,9 +61,16 @@
 		<h1> Welcome to the GrassRobot Interface </h1>
 		Developed by Jose Mayoral based on https://github.com/sylvainar/ROS-OSM-map-integration
 		</center>
-		<!--img id="my_image" style='height: 50%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg"-->
-		<div id="map" style='height: 100%; width: 100%'></div>
+
+		<center>
+		<p id="score"> System Score HERES</p>
 		</center>
+
+		<!--img id="my_image" style='height: 50%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg"-->
+		<div id="map" style='height: 50%; width: 100%'></div>
+		</center>
+
+		<canvas id="personChart" style='height: 50%; width: 100%'></canvas>
 	</body>
 
 	<!-- Scripts -->
