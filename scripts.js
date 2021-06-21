@@ -564,6 +564,7 @@ var ctx = canvas.getContext("2d");
 ctx.fillRect(10,10,1,1);
 */
 
+
 detectionTopic.subscribe(function(value){
 	//document.getElementById("score").innerHTML = "RIsk Status: " + value.data.toFixed(2)*100 + "%"
 	//console.log("safety score received")
@@ -578,8 +579,14 @@ detectionTopic.subscribe(function(value){
 
 	})
 
-	var x = new Chart(document.getElementById("personChart"), {
+	var chart1 = document.getElementById("personChart").getContext("2d");
+	//chart1.height = 10
+	var x = new Chart(chart1, {
 	   type: 'scatter',
+		 scaleOverride : false,
+		scaleSteps : 1,
+		 scaleStepWidth : 50,
+	 		scaleStartValue : 0,
 	   data: {
 	      datasets: [{
 	         label: "Test",
@@ -587,11 +594,34 @@ detectionTopic.subscribe(function(value){
 	      }]
 	   },
 	   options: {
-	      responsive: true
+	      responsive: false,
+				animation: false,
+				maintainAspectRatio: false,
+				scales: {
+        yAxes: [{
+            display: true,
+            ticks: {
+                suggestedMin: -5,    // minimum will be 0, unless there is a lower value.
+								suggestedMax: 5,    // minimum will be 0, unless there is a lower value.
+
+                // OR //
+                beginAtZero: false   // minimum value will be 0.
+            }
+        }],
+				xAxes: [{
+						display: true,
+						ticks: {
+								suggestedMin: -5,    // minimum will be 0, unless there is a lower value.
+								suggestedMax: 5,    // minimum will be 0, unless there is a lower value.
+
+								// OR //
+								beginAtZero: false   // minimum value will be 0.
+						}
+				}]
+    }
 	   }
 	});
 	console.log(mydata, "data")
-
 	/*Original
 	var x = new Chart(document.getElementById("personChart"), {
 	   type: 'scatter',
