@@ -626,7 +626,7 @@ detectionTopic.subscribe(function(value){
 	      //}]
 	   },
 	   options:{
-	      responsive: false,
+	      responsive: true,
 				animation: false,
 				maintainAspectRatio: true,
 				scales: {
