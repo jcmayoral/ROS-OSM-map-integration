@@ -40,7 +40,7 @@ var CONFIG_tile_source = 'server'
 var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 
 // Network address to ROS server (it can be localhost or an IP)
-var CONFIG_ROS_server_URI = 'localhost';
+var CONFIG_ROS_server_URI = '10.230.42.66';
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 //CONFIG_ROS_server_URI = 'josePC'
 
@@ -74,7 +74,7 @@ var example_line = Array()
 
 //===> ROS connexion
 var ros = new ROSLIB.Ros({
-	url : 'ws://'+ CONFIG_ROS_server_URI +':8080'
+	url : 'ws://'+ CONFIG_ROS_server_URI +':9090'
 });
 
 /*
@@ -573,7 +573,8 @@ detectionTopic.subscribe(function(value){
 	//console.log("safety score received")
 	//var ctx = canvas.getContext("2d");
 	var mydata = []
-	//mydata.push({"x":0.0, "y": 0.0})
+	var ids = ""
+	mydata.push({"x":0.0, "y": 0.0, "r": 20.0})
 	var labels = new Array()
 
 	//console.log(value)
@@ -583,7 +584,8 @@ detectionTopic.subscribe(function(value){
 
 		//mydata.push({"label": object.object_id, "data": {"x": object.pose.position.x.toFixed(1), "y": object.pose.position.y.toFixed(1), "r": 10}})
 		labels.push(object.object_id)
-		mydata.push({"x": object.pose.position.x.toFixed(1), "y": object.pose.position.y.toFixed(1)})
+		ids = ids+ object.object_id + " "
+		mydata.push({"x": object.pose.position.x.toFixed(1), "y": object.pose.position.y.toFixed(1), "r": 10})
 		//ctx.fillRect(pose.x,pose.y,1,1);
 
 	})
@@ -591,6 +593,7 @@ detectionTopic.subscribe(function(value){
 	console.log(mydata)
 
 	document.getElementById("ndetections").innerHTML = "Number of Detections: "+ value.objects.length;
+	document.getElementById("iddetections").innerHTML = "IDs: "+ ids;
 
 	var ctx = document.getElementById("personChart").getContext("2d");
 
@@ -654,7 +657,7 @@ detectionTopic.subscribe(function(value){
 	            x: 0,
 	            y: 5
 	         }, {
-	            x: 5,
+	            x: //5,
 	            y: 10
 	         }, {
 	            x: 8,
