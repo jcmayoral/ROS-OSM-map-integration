@@ -567,6 +567,8 @@ var ctx = canvas.getContext("2d");
 ctx.fillRect(10,10,1,1);
 */
 
+var ctx = document.getElementById("personChart").getContext("2d");
+var x = null
 
 detectionTopic.subscribe(function(value){
 	//document.getElementById("score").innerHTML = "RIsk Status: " + value.data.toFixed(2)*100 + "%"
@@ -590,16 +592,22 @@ detectionTopic.subscribe(function(value){
 
 	})
 
-	console.log(mydata)
+	//console.log(mydata)
 
 	document.getElementById("ndetections").innerHTML = "Number of Detections: "+ value.objects.length;
 	document.getElementById("iddetections").innerHTML = "IDs: "+ ids;
 
-	var ctx = document.getElementById("personChart").getContext("2d");
-
+	//console.log(x)
+	if (x){
+		//console.log("destroy chart")
+		x.destroy()
+	}
+	else{
+		console.log("first run")
+	}
 	//chart1.height = 10
 	ctx.fillStyle = 'green';
-	var x = new Chart(ctx, {
+	x = new Chart(ctx, {
 	   type: 'bubble',
 		 showLine: false,
 		 scaleOverride : false,
@@ -618,7 +626,7 @@ detectionTopic.subscribe(function(value){
 	      //}]
 	   },
 	   options:{
-	      responsive: true,
+	      responsive: false,
 				animation: false,
 				maintainAspectRatio: true,
 				scales: {
