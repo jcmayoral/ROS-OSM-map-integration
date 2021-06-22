@@ -547,8 +547,11 @@ safetyTopic.subscribe(function(value){
 // = > Perople Stuff
 var detectionTopic = new ROSLIB.Topic({
 	ros : ros,
-	name : "/pointcloud_lidar_processing/detected_objects",
-	messageType : 'geometry_msgs/PoseArray'
+	//name : "/pointcloud_lidar_processing/detected_objects",
+	name: "/pointcloud_lidar_processing/found_object",
+	//messageType : 'geometry_msgs/PoseArray'
+	messageType : 'safety_msgs/FoundObjectsArray'
+
 });
 
 
@@ -569,16 +572,25 @@ detectionTopic.subscribe(function(value){
 	//document.getElementById("score").innerHTML = "RIsk Status: " + value.data.toFixed(2)*100 + "%"
 	//console.log("safety score received")
 	//var ctx = canvas.getContext("2d");
-	var mydata = new Array()
+	var mydata = []
 	//mydata.push({"x":0.0, "y": 0.0})
+	var labels = new Array()
 
 	//console.log(value)
-	value.poses.forEach(function(pose){
+	value.objects.forEach(function(object){
 		//console.log({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
-		mydata.push({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
+		//mydata.push({label:object.object_id, data: {x: parseFloat(1), y: parseFloat(2), "r": parseFloat(10)}, type: "bubble"})
+
+		//mydata.push({"label": object.object_id, "data": {"x": object.pose.position.x.toFixed(1), "y": object.pose.position.y.toFixed(1), "r": 10}})
+		labels.push(object.object_id)
+		mydata.push({"x": object.pose.position.x.toFixed(1), "y": object.pose.position.y.toFixed(1)})
 		//ctx.fillRect(pose.x,pose.y,1,1);
 
 	})
+
+	console.log(mydata)
+
+	document.getElementById("ndetections").innerHTML = "Number of Detections: "+ value.objects.length;
 
 	var ctx = document.getElementById("personChart").getContext("2d");
 
@@ -592,10 +604,15 @@ detectionTopic.subscribe(function(value){
 		// scaleStepWidth : 50,
 		//scaleStartValue : 0,
 	   data: {
-	      datasets: [{
-	         label: "Detections",
-	         data: mydata
-	      }]
+			 datasets: [{
+                label: "Detections",
+                data: mydata
+             }]
+
+	      //datasets: mydata,// [{
+	      //fzlabels: labels,
+	      //   data: mydata
+	      //}]
 	   },
 	   options:{
 	      responsive: true,
@@ -625,7 +642,6 @@ detectionTopic.subscribe(function(value){
     }
     }
 	});
-	console.log("TYPE", ctx)
 	//x.render()
 	//console.log(mydata, "data")
 	/*Original
