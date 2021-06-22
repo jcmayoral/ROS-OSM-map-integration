@@ -570,33 +570,37 @@ detectionTopic.subscribe(function(value){
 	//console.log("safety score received")
 	//var ctx = canvas.getContext("2d");
 	var mydata = new Array()
+	//mydata.push({"x":0.0, "y": 0.0})
 
 	//console.log(value)
 	value.poses.forEach(function(pose){
-		console.log({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
+		//console.log({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
 		mydata.push({"x": pose.position.x.toFixed(1), "y": pose.position.y.toFixed(1)})
 		//ctx.fillRect(pose.x,pose.y,1,1);
 
 	})
 
-	var chart1 = document.getElementById("personChart").getContext("2d");
+	var ctx = document.getElementById("personChart").getContext("2d");
+
 	//chart1.height = 10
-	var x = new Chart(chart1, {
-	   type: 'scatter',
+	ctx.fillStyle = 'green';
+	var x = new Chart(ctx, {
+	   type: 'bubble',
+		 showLine: false,
 		 scaleOverride : false,
-		scaleSteps : 1,
-		 scaleStepWidth : 50,
-	 		scaleStartValue : 0,
+			//scaleSteps : 50,
+		// scaleStepWidth : 50,
+		//scaleStartValue : 0,
 	   data: {
 	      datasets: [{
-	         label: "Test",
+	         label: "Detections",
 	         data: mydata
 	      }]
 	   },
-	   options: {
-	      responsive: false,
+	   options:{
+	      responsive: true,
 				animation: false,
-				maintainAspectRatio: false,
+				maintainAspectRatio: true,
 				scales: {
         yAxes: [{
             display: true,
@@ -619,13 +623,15 @@ detectionTopic.subscribe(function(value){
 						}
 				}]
     }
-	   }
+    }
 	});
-	console.log(mydata, "data")
+	console.log("TYPE", ctx)
+	//x.render()
+	//console.log(mydata, "data")
 	/*Original
 	var x = new Chart(document.getElementById("personChart"), {
 	   type: 'scatter',
-	   data: {
+	   data: {w
 	      datasets: [{
 	         label: "Test",
 	         data: [{
