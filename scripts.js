@@ -488,19 +488,6 @@ tfClient.subscribe('workspace', function(tf) {
     console.log(tf);
 });*/
 
-/*
-console.log("register image")
-var image_topic = new ROSLIB.Topic({
-  ros: ros, name: '/usb_cam/image_raw/compressed',
-  messageType: 'sensor_msgs/CompressedImage'
-});
-
-image_topic.subscribe(function(message) {
-	console.log("in image")
-  document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
-  image_topic.unsubscribe();
-});
-*/
 paramMarkersTopicName.get(function(value) {
 	console.log("AQUI", value)
 
@@ -682,4 +669,25 @@ detectionTopic.subscribe(function(value){
 	});
 	*/
 
+});
+
+
+// = > Camera Stuff
+
+console.log("register image")
+var image_topic = new ROSLIB.Topic({
+  ros: ros,
+	name: '/camera/color/image_raw/compressed',
+	//name: '/darknet_ros/detection_image',
+	messageType: 'sensor_msgs/CompressedImage'
+	//messageType: 'sensor_msgs/Image'
+});
+
+image_topic.subscribe(function(message) {
+	console.log("in image")
+  document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
+	//setTimeout(100,function(){
+//		console.log("Timeout")
+	//})
+	//image_topic.unsubscribe();
 });
