@@ -114,35 +114,37 @@
 			</div>
 		</div>
 
-		<div id="Safety" class="tabcontent">
+		<div id="Status" class="tabcontent">
 			<div style="width: 100%; height: 10%;">
 				<center>
-					<h2> <b> Detected People </b> </h2>
-					<canvas id="personChart" style='height: 20%; width: 100%'>
-					</canvas>
+					<h2> <b> System Info </b> </h2>
+					<p id="score"> System Score XXX</p>
+					<p id="ndetections"> Persons Detected XXX</p>
+					<p id="iddetections"> IDs XXX</p>
 				</center>
       </div>
 		</div>
 
 
-		<div id="Status" class="tabcontent">
+		<div id="Safety" class="tabcontent">
+			<center>
 				<div style="display: table-row; width: 100%; height: 100%;">
 					<div style="width: 50%; display: table-cell; background: white;">
-						<center>
-							<h2> <b> System Info </b> </h2>
-							<p id="score"> System Score XXX</p>
-							<p id="ndetections"> Persons Detected XXX</p>
-							<p id="iddetections"> IDs XXX</p>
-						</center>
+					<center>
+						<h2> <b> Detected People </b> </h2>
+						<canvas id="personChart" style='height: 70%; width: 100%'>
+						</canvas>
+					</center>
 					</div>
 					<div style="width: 50%; display: table-cell; background: white;">
 						<center>
 							<h2> <b> Camera </b> </h2>
-							<img id="my_image" style='height: 300pt; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg">
+							<img id="my_image" style='height: 70%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg">
 						</center>
 					</div>
 				</div>
-	    </div>
+			</center>
+		</div>
 
 			<script>
 			function openCity(evt, system) {
