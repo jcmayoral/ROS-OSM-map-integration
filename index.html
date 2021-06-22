@@ -68,31 +68,36 @@
 
 
 			<div style="width: 100%; display: table;">
-	        <div style="display: table-row; height: 100px;">
-	            <div style="width: 50%; display: table-cell; background: white;">
-	               	GPS Map
-									<div id="map" style='height: 300pt; width: 90%'></div>
-
-	            </div>
-	            <div style="display: table-cell; background: white;">
-	                Detected People
-									<canvas id="personChart" style='height: 100pt; width: 60%'>
-									</canvas>
-
-	            </div>
+				<div style="display: table-row; height: 40%;">
+	        <div style="width: 50%; display: table-cell; background: white;">
+						<h2> <b> GPS Map </b> </h2>
+						<div id="map" style='height: 300pt; width: 90%'></div>
 	        </div>
-					<div style="width:100%">
-						<h2> System Info </h2>
+          <div style="display: table-cell; background: white;">
+						<h2> <b> Detected People </b> </h2>
+						<canvas id="personChart" style='height: 100pt; width: 60%'>
+						</canvas>
+          </div>
+				</div>
+
+
+				<div style="display: table-row; height: 40%;">
+					<div style="width: 50%; display: table-cell; background: white;">
 						<center>
+							<h2> <b> System Info </b> </h2>
 							<p id="score"> System Score XXX</p>
 							<p id="ndetections"> Persons Detected XXX</p>
 							<p id="iddetections"> IDs XXX</p>
 						</center>
 					</div>
+					<div style="width: 50%; display: table-cell; background: white;">
+						<center>
+							<h2> <b> Camera </b> </h2>
+							<img id="my_image" style='height: 300pt; width: 300pt; object-fit: fill' src="assets/img/placeholder.jpg">
+						</center>
+					</div>
+				</div>
 	    </div>
-
-		<!--img id="my_image" style='height: 50%; width: 100%; object-fit: fill' src="assets/img/placeholder.jpg"-->
-
 
 	</body>
 
