@@ -1,4 +1,6 @@
 
+var CURRENTTAB= null
+
 document.addEventListener("DOMContentLoaded", function (event) {
      var city;//define your city var
 
@@ -30,5 +32,31 @@ function setup(event, tabid){
 
   document.getElementById(tabid).style.display = "block";
   event.currentTarget.className += " active";
+  console.log(map_function[tabid]);
+  map_function[tabid](tabid);
+}
 
+
+function runSafety(tabid){
+  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
+  CURRENTTAB = tabid;
+  console.log("after", tabid)
+}
+
+function runStatus(tabid){
+  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
+  CURRENTTAB = tabid;
+  console.log("after", tabid)
+}
+
+function runLocation(tabid){
+  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
+  CURRENTTAB = tabid;
+  console.log("after", tabid)
+}
+
+map_function = {
+  "Safety System": runSafety,
+  "Status": runStatus,
+  "Location": runLocation
 }

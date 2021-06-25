@@ -28,14 +28,6 @@ var CONFIG_default_people_topic_name = '/people';
 
 // The number of cycles between every marker position reload
 var CONFIG_cycles_number = 20;
-
-
-let safety_bttn = document.getElementById("Safety");
-console.log(safety_bttn, typeof(safety_bttn))
-//safety_bttn.on("click", function(e){
-//	console.log("in click", e)
-//}, false)
-
 // We can download the map online on OSM server, but
 // it won't work if the car isn't connected to the internet.
 // If you downloaded tiles and put it in the car, then you can
