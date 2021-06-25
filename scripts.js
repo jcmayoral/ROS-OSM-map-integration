@@ -87,6 +87,71 @@ var edgesActionClient = ROSLIB.ActionClient({
 
 // ============================= FUNCTIONS
 
+
+//  => Create param with initial value
+var paramTopicNameValue = CONFIG_default_gps_topic_name;
+var paramNbCyclesValue = CONFIG_cycles_number;
+
+listenerGPS = new ROSLIB.Topic({
+	ros : ros,
+	name : paramTopicNameValue,
+	messageType : 'sensor_msgs/NavSatFix'
+});
+
+function setListenerGPS(){
+	//===> Set the GPS listener
+	console.log("subscriber gps msg "+paramTopicNameValue)
+	listenerGPS.subscribe(function(message) {
+		// We have to wait for the GPS before showing the map, because we don't know where we are
+		var lat = message.latitude;
+		var lon = message.longitude;
+
+		if(loadedMap == false)
+		{
+			swal.close();
+			// Center the map on the car's position
+			map.setView([lat, lon], zoomLevel);
+			// Add the marker on the map
+			markerPosition.addTo(map);
+			// Set the flag to true, so we don't have to load the map again
+			loadedMap = true;
+		}
+
+		if(i == paramNbCyclesValue)
+		{
+			// Refresh the global variable with the position
+			currentPosition.latitude = lat;
+			currentPosition.longitude = lon;
+			// Refresh the position of the marker on the map
+			markerPosition.setLatLng([lat, lon]);
+			// If the marker has went out of the map, we move the map
+			bounds = map.getBounds();
+			if(!bounds.contains([lat, lon]))
+				map.setView([lat, lon], zoomLevel);
+
+			i=0
+		}
+
+		i++;
+
+	});
+}
+
+//setListenerGPS()
+
+function endLocation(){
+	console.log("endLocation")
+	listenerGPS.unsubscribe()
+	//listenerGPS = null;
+	//map.off()
+}
+
+
+function setupLocation(){
+	console.log("setupLocation")
+	setListenerGPS()
+}
+
 // ===> mapInit() : init the map
 function mapInit() {
 
@@ -209,7 +274,7 @@ function mapInit() {
 }
 
 
-
+/*
 swal({
 	title: "Connecting to ROS...",
 	showConfirmButton: true,
@@ -218,6 +283,8 @@ swal({
 	allowOutsideClick: false,
 	allowEscapeKey: false
 });
+
+
 
 ros.on('connection', function() {
 	console.log('Connected to websocket server.');
@@ -250,6 +317,7 @@ ros.on('error', function(error) {
 		window.location.reload();
 	});
 });
+*/
 
 ros.on('close', function() {
 	console.log("Connexion closed.");
@@ -392,11 +460,6 @@ map.on('click', function(e) {
 	}
 });
 
-//===> Set the GPS listener
-
-//  => Create param with initial value
-var paramTopicNameValue = CONFIG_default_gps_topic_name;
-var paramNbCyclesValue = CONFIG_cycles_number;
 
 //  => Init the ROS param
 var paramTopicName = new ROSLIB.Param({ros : ros, name : '/panel/gps_topic'});
@@ -420,53 +483,6 @@ paramTopicName.get(function(value) {
 			paramNbCyclesValue = value;
 		else
 		paramNbCycles.set(paramNbCyclesValue);
-
-		// Set the listener informations
-		listenerGPS = new ROSLIB.Topic({
-			ros : ros,
-			name : paramTopicNameValue,
-			messageType : 'sensor_msgs/NavSatFix'
-		});
-
-		// Set the callback function when a message from /gps is received
-
-		var i = 0;
-		console.log("antes del subscribe"+paramTopicNameValue)
-
-		listenerGPS.subscribe(function(message) {
-			// We have to wait for the GPS before showing the map, because we don't know where we are
-			var lat = message.latitude;
-			var lon = message.longitude;
-
-			if(loadedMap == false)
-			{
-				swal.close();
-				// Center the map on the car's position
-				map.setView([lat, lon], zoomLevel);
-				// Add the marker on the map
-				markerPosition.addTo(map);
-				// Set the flag to true, so we don't have to load the map again
-				loadedMap = true;
-			}
-
-			if(i == paramNbCyclesValue)
-			{
-				// Refresh the global variable with the position
-				currentPosition.latitude = lat;
-				currentPosition.longitude = lon;
-				// Refresh the position of the marker on the map
-				markerPosition.setLatLng([lat, lon]);
-				// If the marker has went out of the map, we move the map
-				bounds = map.getBounds();
-				if(!bounds.contains([lat, lon]))
-					map.setView([lat, lon], zoomLevel);
-
-				i=0
-			}
-
-			i++;
-
-		});
 	});
 });
 

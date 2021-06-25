@@ -1,4 +1,3 @@
-
 var CURRENTTAB= null
 
 document.addEventListener("DOMContentLoaded", function (event) {
@@ -32,10 +31,11 @@ function setup(event, tabid){
 
   document.getElementById(tabid).style.display = "block";
   event.currentTarget.className += " active";
-  console.log(map_function[tabid]);
+  console.log(map_function[tabid], CURRENTTAB);
+  endmap_function[CURRENTTAB]();
   map_function[tabid](tabid);
-}
 
+}
 
 function runSafety(tabid){
   console.log("run," + tabid +  " instead of " +  CURRENTTAB);
@@ -51,12 +51,31 @@ function runStatus(tabid){
 
 function runLocation(tabid){
   console.log("run," + tabid +  " instead of " +  CURRENTTAB);
+  setupLocation()
   CURRENTTAB = tabid;
   console.log("after", tabid)
 }
+
+function endSafety(){
+	console.log("endSafety")
+}
+
+function endStatus(){
+	console.log("endStatus")
+}
+
 
 map_function = {
   "Safety System": runSafety,
   "Status": runStatus,
   "Location": runLocation
+}
+
+endmap_function = {
+  "Safety System": endSafety,
+  "Status": endStatus,
+  "Location": endLocation,
+  null: function() {
+    console.log("Starting")
+  }
 }
