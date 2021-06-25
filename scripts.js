@@ -29,6 +29,13 @@ var CONFIG_default_people_topic_name = '/people';
 // The number of cycles between every marker position reload
 var CONFIG_cycles_number = 20;
 
+
+let safety_bttn = document.getElementById("Safety");
+console.log(safety_bttn, typeof(safety_bttn))
+//safety_bttn.on("click", function(e){
+//	console.log("in click", e)
+//}, false)
+
 // We can download the map online on OSM server, but
 // it won't work if the car isn't connected to the internet.
 // If you downloaded tiles and put it in the car, then you can
@@ -43,6 +50,7 @@ var CONFIG_tile_local_path = 'UPV/{z}/{x}/{y}.png';
 var CONFIG_ROS_server_URI = '10.230.42.66';
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 //CONFIG_ROS_server_URI = 'josePC'
+CONFIG_ROS_server_URI='localhost'
 
 
 var left_bottom = [0,0]
