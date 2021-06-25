@@ -40,11 +40,13 @@ function setup(event, tabid){
 function runSafety(tabid){
   console.log("run," + tabid +  " instead of " +  CURRENTTAB);
   CURRENTTAB = tabid;
+  setupSafety()
   console.log("after", tabid)
 }
 
 function runStatus(tabid){
   console.log("run," + tabid +  " instead of " +  CURRENTTAB);
+  setupStatus()
   CURRENTTAB = tabid;
   console.log("after", tabid)
 }
@@ -54,14 +56,6 @@ function runLocation(tabid){
   setupLocation()
   CURRENTTAB = tabid;
   console.log("after", tabid)
-}
-
-function endSafety(){
-	console.log("endSafety")
-}
-
-function endStatus(){
-	console.log("endStatus")
 }
 
 
