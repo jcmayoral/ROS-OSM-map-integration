@@ -32,7 +32,7 @@ var image_topic = new ROSLIB.Topic({
   ros: ros,
 	name: '/camera/color/image_raw/compressed',
 	//name: '/darknet_ros/detection_image',
-  name: '/usb_cam/image_raw/compressed',
+	//name: '/usb_cam/image_raw/compressed',
 	messageType: 'sensor_msgs/CompressedImage'
 	//messageType: 'sensor_msgs/Image'
 });
