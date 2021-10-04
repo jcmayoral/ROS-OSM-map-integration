@@ -30,7 +30,8 @@ listenerGPS = new ROSLIB.Topic({
 // = > Camera Stuff
 var image_topic = new ROSLIB.Topic({
   ros: ros,
-	name: '/camera/color/image_raw/compressed',
+	//name: '/camera/color/image_raw/compressed',
+	name: '/nav_processed_image', 
 	//name: '/darknet_ros/detection_image',
 	//name: '/usb_cam/image_raw/compressed',
 	messageType: 'sensor_msgs/CompressedImage'

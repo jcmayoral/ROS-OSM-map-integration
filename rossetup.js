@@ -15,7 +15,7 @@ var listenerGPS;
 var listenerMarker;
 
 // Network address to ROS server (it can be localhost or an IP)
-var CONFIG_ROS_server_URI = '10.230.42.66';
+var CONFIG_ROS_server_URI = '10.248.0.44'
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 //CONFIG_ROS_server_URI = 'josePC'
 CONFIG_ROS_server_URI='localhost'
