@@ -30,8 +30,18 @@ listenerGPS = new ROSLIB.Topic({
 // = > Camera Stuff
 var image_topic = new ROSLIB.Topic({
   ros: ros,
-	//name: '/camera/color/image_raw/compressed',
-	name: '/nav_processed_image', 
+	name: '/camera/color/image_raw/compressed',
+	//name: '/nav_processed_image',
+	//name: '/darknet_ros/detection_image',
+	//name: '/usb_cam/image_raw/compressed',
+	messageType: 'sensor_msgs/CompressedImage'
+	//messageType: 'sensor_msgs/Image'
+});
+
+var map_topic = new ROSLIB.Topic({
+  ros: ros,
+	name: '/map_img/compressed',
+	//name: '/nav_processed_image',
 	//name: '/darknet_ros/detection_image',
 	//name: '/usb_cam/image_raw/compressed',
 	messageType: 'sensor_msgs/CompressedImage'
@@ -91,3 +101,10 @@ var detectionTopic = new ROSLIB.Topic({
   messageType : 'safety_msgs/FoundObjectsArray'
 
 });
+
+
+var start_service = new ROSLIB.Service({
+    ros : ros,
+    name : '/execute_remotely',
+    serviceType : 'std_srvs/SetBool'
+  });

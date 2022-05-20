@@ -23,6 +23,7 @@
 		<script type="text/javascript" src="http://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 		<script type="text/javascript" src="http://static.robotwebtools.org/roslibjs/current/roslib.min.js"></script>
 
+
 		<!-- Bootstrap & JQuery -->
 		<link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 		<script src="lib/jquery/jquery-2.2.0.min.js"></script>
@@ -74,6 +75,9 @@
 					transition: 0.3s;
 					font-size: 17px;
 				}
+
+				.button2 {width: 100%; height: 150pt;}
+
 				/* Change background color of buttons on hover */
 				.tab button:hover {
 				background-color: #ddd;
@@ -93,16 +97,40 @@
 	</style>
 
 	<center>
-		<h1> Welcome to the GrassRobot Interface </h1>
-			Developed by Jose Mayoral based on https://github.com/sylvainar/ROS-OSM-map-integration
+		<h1>The GrassRobot Interface </h1>
 	</center>
 
 	<body>
 
 		<div class="tab">
-			<button class="tablinks">Location</button>
-			<button class="tablinks">Safety System</button>
-			<button class="tablinks">Status</button>
+			<button class="tablinks" onclick="removeElement(">Information</button>
+			<button class="tablinks" onclick="removeElement()">Location</button>
+			<button class="tablinks" onclick="removeElement()">Navigation System</button>
+			<button class="tablinks" onclick="script()">Stats</button>
+		</div>
+
+		<div id="Information" class="tabcontent">
+			<div>
+        	<center>
+						<b> This webpage is connected to a simulation that is running in my computer in Mexico. It is not a video.</b>
+						<h3>
+							Instructions
+						</h3>
+						<p>
+							There are 3 main pages in this website.
+							In the first one title "Location" just display an example how to localize the robot in a map.
+							The second one have some feedback coming from the simulation. Together with a start button to restart the task of the robot. Be careful with this.
+							The third page display some statistical information of the simulation that is running, distributed in task, duration of motion and distance covered.
+						</p>
+						<p>
+								Hi. This is Jose. This is just a Small Demo to show how the navigation systems works.
+								Thanks for all the support during these years.
+								I hope all is going well for everyone.
+						</p>
+					<h3>Developed by Jose Mayoral 2022</h3>
+					</center>
+			</div>
+
 		</div>
 
 		<div id="Location" class="tabcontent">
@@ -112,27 +140,70 @@
 						<div id="map" style='height: 300pt; width: 90%'></div>
 					</center>
 			</div>
+
 		</div>
 
-		<div id="Status" class="tabcontent">
+		<div id="Stats" class="tabcontent">
 			<div style="width: 100%; height: 10%;">
-				<center>
-					<h2> <b> System Info </b> </h2>
-					<p id="score"> System Score XXX</p>
-					<p id="iddetections"> IDs XXX</p>
-				</center>
-      </div>
+
+			</div>
+
 		</div>
 
+		<script>
+		console.log("in")
+		// Requiring fs module in which
+		// readFile function is defined.
+		//const fs = require('fs')
 
-		<div id="Safety System" class="tabcontent">
+		// Reading data in utf-8 format
+		// which is a type of character set.
+		// Instead of 'utf-8' it can be
+		// other character set also like 'ascii'
+		function script(){
+			removeElement()
+			var iframe = document.createElement('iframe');
+			iframe.id = 'iframe';
+			//iframe.style.display = 'none';
+			document.body.appendChild(iframe);
+			iframe.src = 'example.txt';
+			setTimeout(function(){
+					console.log("in2")
+					iframe =document.getElementById('iframe')
+					var text = iframe.contentDocument.body.firstChild.innerHTML;
+					iframe.setAttribute("height","100%")
+					console.log(text)
+					//alert(text);
+					//document.getElementById("example").style.textDecoration = "none";
+					//document.getElementById("example").innerHTML =text;
+
+			}, 1000);
+		}
+		</script>
+
+
+		<script>
+		function removeElement(){
+			console.log("CLOSE PLEASE")
+			if (document.contains(document.getElementById("iframe"))) {
+						document.getElementById("iframe").remove();
+			}
+		}
+		</script>
+
+
+		<div id="Navigation System" class="tabcontent">
 			<center>
 				<div style="display: table-row; width: 100%; height: 100%;">
 					<div style="width: 50%; display: table-cell; background: white;">
-					<center>
+					<!--center>
 						<h2> <b> Detected People </b> </h2>
 						<canvas id="personChart" style='height: 70%; width: 100%'>
 						</canvas>
+					</center-->
+					<center>
+						<h2> <b> Map Representation </b> </h2>
+						<img id="my_map" width="400" height="400" src="assets/img/placeholder.jpg">
 					</center>
 					</div>
 					<div style="width: 50%; display: table-cell; background: white;">
@@ -142,7 +213,9 @@
 						</center>
 					</div>
 				</div>
-				<p id="ndetections"> Persons Detected XXX</p>
+
+				<button class="button2" onclick="startExecution()"> Restart </button>
+				<!--p id="ndetections"> Persons Detected XXX</p-->
 			</center>
 		</div>
 
@@ -163,10 +236,10 @@
 			}
 		</script-->
 	</body>
-
 	<!-- Scripts -->
-	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
+
 	<script src="rossetup.js"></script>
+	<script src="lib/bootstrap/js/bootstrap.min.js"></script>
 	<script src="roselements.js"></script>
 	<script src="map.js"></script>
 	<script src="trigger_functions.js"</script>

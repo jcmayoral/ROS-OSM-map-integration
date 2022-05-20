@@ -1,0 +1,36 @@
+Stats during CUT 
+ 
+Working Stats 
+ Execution Time 2860.772203683853 seconds 
+ 
+ Covered Distance 1945.1417502357674 
+
+Stats during Change Row 
+Execution Time 10708.885999441147 seconds 
+ 
+ Covered Distance 60.119537304277046 
+
+TOTAL stats for mode CUT 
+Execution Time 15962.263800621033 seconds 
+ 
+ Covered Distance 2497.727983496803 
+
+ 
+Stats during Collect 
+ 
+Working Stats 
+ Execution Time 0.0 seconds 
+ 
+ Covered Distance 0.0 
+
+Stats during Change Row 
+Execution Time 0.0 seconds 
+ 
+ Covered Distance 0.0 
+
+TOTAL stats for mode Collect 
+Execution Time 0.0 seconds 
+ 
+ Covered Distance 0.0 
+
+ 

@@ -14,22 +14,33 @@ var i = 0;
 var listenerGPS;
 var listenerMarker;
 
+
 // Network address to ROS server (it can be localhost or an IP)
-var CONFIG_ROS_server_URI = '10.248.0.44'
+var CONFIG_ROS_server_URI = 'localhost'
+var PORT='9090'
 //CONFIG_ROS_server_URI = 'nmbu-ThinkPad-T480'
 //CONFIG_ROS_server_URI = 'josePC'
-CONFIG_ROS_server_URI='localhost'
-
+//CONFIG_ROS_server_URI='192.168.1.67'
+//CONFIG_ROS_server_URI='189.147.236.185'
+//CONFIG_ROS_server_URI='PHD-PC`'
+CONFIG_ROS_server_URI='grassrobotics.sytes.net'
 //===> ROS connexion
-console.log("ROS")
 var ros = new ROSLIB.Ros({
-	url : 'ws://'+ CONFIG_ROS_server_URI +':9090'
+	url : 'ws://'+ CONFIG_ROS_server_URI +':9090',
+	//url : CONFIG_ROS_server_URI +':9090',
+	transportLibrary : 'websocket'
 });
+
+//ros.connect('ws://'+ CONFIG_ROS_server_URI +':'+ PORT);
+
+ros.on('error', function(error){
+	console.log(error)
+})
 
 ros.on('close', function() {
 	console.log("Connexion closed.");
 	swal({
-		title: "Error connecting the ROS server",
+		title: "Error connecting the ROSSS server",
 		text: "Unable to reach ROS server. Is rosbridge launched? in server: " + CONFIG_ROS_server_URI,
 		type: "error",
 		confirmButtonText: "Retry",
@@ -41,3 +52,6 @@ ros.on('close', function() {
 		window.location.reload();
 	});
 });
+
+
+console.log("should be fine -> " , CONFIG_ROS_server_URI, PORT)

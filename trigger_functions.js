@@ -16,6 +16,7 @@ function setupSafety(){
 	console.log("setupSafety")
 	setListenerSafety()
   setListenerCamera()
+	setListenerMap()
   setListenerPeople()
 }
 
@@ -41,8 +42,16 @@ function endStatus(){
 function setListenerCamera(){
   console.error("seting camera")
 	image_topic.subscribe(function(message) {
-		console.log("in image")
+		//console.log("in image")
 	  document.getElementById('my_image').src = "data:image/jpg;base64," + message.data;
+	});
+}
+
+function setListenerMap(){
+  console.error("seting camera")
+	map_topic.subscribe(function(message) {
+		console.log("in map", message.data.shape)
+	  document.getElementById('my_map').src = "data:image/jpg;base64," + message.data;
 	});
 }
 
@@ -116,7 +125,7 @@ function setListenerRegion(){
 }
 
 function setListenerPeople(){
-
+	return
   var ctx = document.getElementById("personChart").getContext("2d");
   var x = null
 

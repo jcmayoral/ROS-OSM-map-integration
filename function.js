@@ -33,41 +33,50 @@ function setup(event, tabid){
   event.currentTarget.className += " active";
   console.log(map_function[tabid], CURRENTTAB);
   endmap_function[CURRENTTAB]();
+  console.log("open ", tabid);
   map_function[tabid](tabid);
 
 }
 
 function runSafety(tabid){
-  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
   CURRENTTAB = tabid;
   setupSafety()
-  console.log("after", tabid)
 }
 
 function runStatus(tabid){
-  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
   setupStatus()
   CURRENTTAB = tabid;
-  console.log("after", tabid)
 }
 
 function runLocation(tabid){
-  console.log("run," + tabid +  " instead of " +  CURRENTTAB);
   setupLocation()
   CURRENTTAB = tabid;
-  console.log("after", tabid)
+}
+
+
+function startExecution(){
+  console.log("start execution")
+
+  var request = new ROSLIB.ServiceRequest({
+    data : true,
+  });
+
+  start_service.callService(request, function(result) {
+    console.log('Result for service call on '
+      + start_service.sucess);
+  });
 }
 
 
 map_function = {
-  "Safety System": runSafety,
-  "Status": runStatus,
+  "Navigation System": runSafety,
+  "Stats": runStatus,
   "Location": runLocation
 }
 
 endmap_function = {
-  "Safety System": endSafety,
-  "Status": endStatus,
+  "Navigation System": endSafety,
+  "Stats": endStatus,
   "Location": endLocation,
   null: function() {
     console.log("Starting")
